@@ -25,8 +25,7 @@ public class ArrowController : MonoBehaviour
         }
 
         Vector2 p1 = transform.position;
-        Vector2 p2 = this.player.transform.position;
-        Vector2 dir = p1 - p2;
+        Vector2 dir = p1 ;
         float d = dir.magnitude;
         float r1 = 0.5f;
         float r2 = 1.0f;

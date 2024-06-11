@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
 public class MoveGround01 : MonoBehaviour
 {
     // 変数定義
@@ -9,6 +10,7 @@ public class MoveGround01 : MonoBehaviour
     SurfaceEffector2D surfaceEffector;
     Vector2 DefaultPos;
     Vector2 PrevPos;
+    public float speed = 2f; // 速度の調整用
 
     void Start()
     {
@@ -22,7 +24,7 @@ public class MoveGround01 : MonoBehaviour
         PrevPos = rb.position;
 
         // X座標のみ横移動 Mathf.PingPongの数値部分変更で移動距離が変わる
-        Vector2 pos = new Vector2(DefaultPos.x + Mathf.PingPong(Time.time, 7), DefaultPos.y);
+        Vector2 pos = new Vector2(DefaultPos.x + Mathf.PingPong(Time.time * speed * 2, 7), DefaultPos.y);
         rb.MovePosition(pos);
 
         // 速度を逆算する

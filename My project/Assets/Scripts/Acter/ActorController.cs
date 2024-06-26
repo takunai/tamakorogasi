@@ -13,6 +13,7 @@ public class ActorController : MonoBehaviour
     private SpriteRenderer spriteRenderer;
     private Collider2D collider2D;
     public CameraController cameraController; // カメラ制御クラス
+    private UIManager uiManager; // UIマネージャーの参照を追加
 
     // 移動関連変数
     [SerializeField] private float xSpeed = 6.0f; // X方向移動速度
@@ -38,6 +39,7 @@ public class ActorController : MonoBehaviour
         rigidbody2D = GetComponent<Rigidbody2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         collider2D = GetComponent<Collider2D>();
+        uiManager = FindObjectOfType<UIManager>(); // UIManagerの参照を取得
 
         // カメラ初期位置
         cameraController.SetPosition(transform.position);
@@ -62,10 +64,11 @@ public class ActorController : MonoBehaviour
         HandleMovementInput();
         HandleJumpInput();
 
-        // 画面外に出たらスタート位置に戻る
+        // 画面外に出たらリスタートボタンを表示
         if (transform.position.y < -10.0f)
         {
-            ResetPosition();
+            Debug.Log("Player out of bounds, showing restart button");
+            uiManager.ShowRestartButton();
         }
     }
 
@@ -97,7 +100,8 @@ public class ActorController : MonoBehaviour
     /// </summary>
     private void HandleJumpInput()
     {
-        if (Input.GetKeyDown(KeyCode.UpArrow))
+        if (Input.GetKeyDown(KeyCode.UpArrow) &&
+            this.rigidbody2D.velocity.y == 0)
         {
             StartJump();
         }
@@ -179,7 +183,7 @@ public class ActorController : MonoBehaviour
         rigidbody2D.velocity = new Vector2(rigidbody2D.velocity.x, downwardForce);
     }
 
-    private void ResetPosition()
+    public void ResetPosition()
     {
         // 位置をスタート位置にリセット
         transform.position = startPosition;

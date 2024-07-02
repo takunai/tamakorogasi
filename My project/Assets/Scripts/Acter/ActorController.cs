@@ -32,6 +32,10 @@ public class ActorController : MonoBehaviour
     // スタート位置
     private Vector3 startPosition;
 
+    // 地面との接触判定
+    private bool isGrounded = false;
+    private bool canDoubleJump = false; // 二段ジャンプのためのフラグ
+
     // Start（オブジェクト有効化時に1度実行）
     void Start()
     {
@@ -100,12 +104,20 @@ public class ActorController : MonoBehaviour
     /// </summary>
     private void HandleJumpInput()
     {
-        if (Input.GetKeyDown(KeyCode.UpArrow) &&
-            this.rigidbody2D.velocity.y == 0)
+        if (Input.GetKeyDown(KeyCode.UpArrow))
         {
-            StartJump();
+            if (isGrounded)
+            {
+                StartJump();
+                canDoubleJump = true; // 二段ジャンプを許可
+            }
+            else if (canDoubleJump)
+            {
+                StartJump();
+                canDoubleJump = false; // 二段ジャンプを無効化
+            }
         }
-        else if (Input.GetKey(KeyCode.UpArrow))
+        else if (Input.GetKey(KeyCode.UpArrow) && remainJumpTime > 0.0f)
         {
             ContinueJump();
         }
@@ -206,5 +218,18 @@ public class ActorController : MonoBehaviour
 
         // 計算した移動速度ベクトルをRigidbody2Dに反映
         rigidbody2D.velocity = velocity;
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.contacts[0].normal.y > 0.5f)
+        {
+            isGrounded = true;
+        }
+    }
+
+    private void OnCollisionExit2D(Collision2D collision)
+    {
+        isGrounded = false;
     }
 }
